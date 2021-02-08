@@ -2,6 +2,9 @@
 
 ## Travaux pratiques
 
+[Cours](PDF/cours.pdf)  
+[Consignes](PDF/consignes.pdf)
+
 TP1 - Aliments pour bétails  
 TP2 - Job-Shop  
 TP3 - Voyageur de commerce  
