@@ -9,6 +9,6 @@ using namespace std;
 class Betail
 {
 public:
-	void static solve();
+	void static solve(int nb_iter);
 };
 

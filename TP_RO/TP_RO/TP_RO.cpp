@@ -6,5 +6,5 @@
 int main()
 {
     // Exercice 1 : Aliments pour bétail
-    Betail::solve();
+    Betail::solve(2);
 }

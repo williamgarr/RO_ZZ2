@@ -144,9 +144,11 @@
   <ItemGroup>
     <ClCompile Include="Betail.cpp" />
     <ClCompile Include="TP_RO.cpp" />
+    <ClCompile Include="Voyageur.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Betail.h" />
+    <ClInclude Include="Voyageur.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
