@@ -336,6 +336,7 @@ void Betail::solve(int nb_iter)
 
                 CompteurIA = CompteurIA + 1;
                 resultat = lambda[j];
+                cout << "Lambda[" << j << "] = " << lambda[j] << endl;
 
                 if (i == 1)
                     resultat += C[2] + Pr[j] + C[3];
