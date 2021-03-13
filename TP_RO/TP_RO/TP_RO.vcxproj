@@ -143,12 +143,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Betail.cpp" />
+    <ClCompile Include="Colonne.cpp" />
     <ClCompile Include="Jobshop.cpp" />
     <ClCompile Include="TP_RO.cpp" />
     <ClCompile Include="Voyageur.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Betail.h" />
+    <ClInclude Include="Colonne.h" />
     <ClInclude Include="Jobshop.h" />
     <ClInclude Include="Voyageur.h" />
   </ItemGroup>
