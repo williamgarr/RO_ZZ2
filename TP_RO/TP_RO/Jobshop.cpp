@@ -2,7 +2,7 @@
 
 void Jobshop::solve(string filename, bool display)
 {
-	const int MAX_SIZE = 30;
+	const int MAX_SIZE = 300;
     const int INF = 10000000;
 	string name;
 	int n;
@@ -25,11 +25,11 @@ void Jobshop::solve(string filename, bool display)
 		{
 			for (int j = 0; j < m; j++)
 			{
-				string lectureM, lectureP;
-				file >> lectureM;
-				file >> lectureP;
-				M[i][j] = atoi(lectureM.c_str())+1;
-				P[i][j] = atoi(lectureP.c_str());
+				//string lectureM, lectureP;
+				file >> M[i][j];
+				file >> P[i][j];
+				//M[i][j] = atoi(lectureM.c_str());
+				//P[i][j] = atoi(lectureP.c_str());
 			}
 		}
 		file.close();
@@ -91,8 +91,8 @@ void Jobshop::solve(string filename, bool display)
 	cout << "GLPK version : " << glp_version() << endl;
 
 	glp_prob* lp; //définition nom problème
-	int ia[1000], ja[1000];
-	double ar[1000], z, v;
+	int ia[5001], ja[5001];
+	double ar[5001], z, v;
 	ostringstream oss;
 
 	//création pb glpk
@@ -119,8 +119,7 @@ void Jobshop::solve(string filename, bool display)
 			glp_add_cols(lp, 1);
 			CompteurCol++;
 			glp_set_col_name(lp, CompteurCol, nomcol.c_str());
-			//glp_set_col_bnds(lp, CompteurCol, GLP_LO, 0.0, 1.0);
-			glp_set_col_bnds(lp, CompteurCol, GLP_DB, 0.0, 1.0);
+			glp_set_col_bnds(lp, CompteurCol, GLP_LO, 0.0, 1.0);
 		}
 	}
 
