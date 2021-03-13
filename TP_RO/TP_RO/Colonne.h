@@ -6,9 +6,9 @@
 
 using namespace std;
 
-class Voyageur
+class Colonne
 {
 public:
-	void static solve();
+	static void solve();
 };
 
