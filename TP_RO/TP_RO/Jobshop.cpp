@@ -47,8 +47,8 @@ void Jobshop::solve(string filename, bool display)
 	cout << endl<< "GLPK version : " << glp_version() << endl;
 
 	glp_prob* lp; 
-	int ia[5001], ja[5001];
-	double ar[5001], z, v;
+	int ia[3000], ja[3001];
+	double ar[3001], z, v;
 	ostringstream oss;
 
 	//création pb glpk
@@ -59,9 +59,6 @@ void Jobshop::solve(string filename, bool display)
 	int CompteurContrainte = 0;
 	int CompteurCol = 0;
 	int CompteurIA = 0;
-
-	string nomcol;
-	string nomcontrainte;
 	int position;
 
 	//encodage ordre de passage:
@@ -73,7 +70,7 @@ void Jobshop::solve(string filename, bool display)
 				for (int l = 0; l < m; l++){
 					//si machine identique pour pc différentes
 					if (i != k && M[i][j] == M[k][l]) {
-						oss.str("");
+						oss.str(""); //tj vider oss sinon noms incohérents!
 						oss << "order_" << i << '_' << j << '_' << k << '_' << l;
 						CompteurCol++;
 						glp_add_cols(lp, 1);
@@ -95,7 +92,6 @@ void Jobshop::solve(string filename, bool display)
 			glp_set_col_bnds(lp, CompteurCol, GLP_LO, 0, 0);
 		}
 	}
-
 	//Temps sur la machine
 	for (int i = 0; i < n; i++){
 		for (int j = 0; j < m - 1; j++){
@@ -108,27 +104,22 @@ void Jobshop::solve(string filename, bool display)
 		}
 	}
 
-	glp_create_index(lp);//sinon crash
-
-///////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////	CONTRAINTES	///////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
+	glp_create_index(lp);// avant glp_find_col sinon crash
 
 	//contrainte ordre
-	for (int i = 0; i < n; i++){////////////	BLOC C6	 ////////////
+	for (int i = 0; i < n; i++){
 		for (int j = 0; j < m; j++){
 			for (int k = 0; k < n; k++){
 				for (int l = 0; l < m; l++){
-					if (M[i][j] == M[k][l] && i != k && j != l){
+					if (i != k && M[i][j] == M[k][l]) {
 
 						//add row
 						CompteurContrainte++; //attention increm!
 						oss.str("");
 						oss << "c_" << CompteurContrainte;
-						nomcontrainte = oss.str();
 						v = INF - P[i][j];
-						glp_add_rows(lp, 1);
-						glp_set_row_name(lp, CompteurContrainte, nomcontrainte.c_str());
+						glp_add_rows(lp, 1); //GLP_UP
+						glp_set_row_name(lp, CompteurContrainte, oss.str().c_str());
 						glp_set_row_bnds(lp, CompteurContrainte, GLP_UP, 0, v);
 						
 						oss.str("");
@@ -159,9 +150,8 @@ void Jobshop::solve(string filename, bool display)
 						CompteurContrainte++;
 						oss.str("");
 						oss << "c_" << CompteurContrainte;
-						nomcontrainte = oss.str();
-						glp_add_rows(lp, 1);
-						glp_set_row_name(lp, CompteurContrainte, nomcontrainte.c_str());
+						glp_add_rows(lp, 1);//GLP_LO
+						glp_set_row_name(lp, CompteurContrainte, oss.str().c_str());
 						glp_set_row_bnds(lp, CompteurContrainte, GLP_LO, P[k][l], 0);
 
 						oss.str("");
@@ -193,23 +183,20 @@ void Jobshop::solve(string filename, bool display)
 		}
 	}
 
-
-	//contrainte st1 - st0 -dur = 0 -> GLP_FX à 0
+	//contrainte st1 - st0 -dur = 0 -> GLP_FX
 	for (int i = 0; i < n; i++){
-		for (int j = 0; j < m-1; j++){////////////	BLOC C4	 ////////////
+		for (int j = 0; j < m-1; j++){
 
 			CompteurContrainte++; 
 			oss.str("");
 			oss << "c_" << CompteurContrainte;
-			nomcontrainte = oss.str();
 			glp_add_rows(lp, 1);
-			glp_set_row_name(lp, CompteurContrainte, nomcontrainte.c_str());
+			glp_set_row_name(lp, CompteurContrainte, oss.str().c_str());
 			glp_set_row_bnds(lp, CompteurContrainte, GLP_FX, 0, 0);
 
 			oss.str("");
 			oss << "stime_" << i << '_' << j + 1;
-			nomcol = oss.str();
-			position = glp_find_col(lp, nomcol.c_str());
+			position = glp_find_col(lp, oss.str().c_str());
 			CompteurIA++;
 			ia[CompteurIA] = CompteurContrainte;
 			ja[CompteurIA] = position;
@@ -217,8 +204,7 @@ void Jobshop::solve(string filename, bool display)
 
 			oss.str("");
 			oss << "stime_" << i << '_' << j;
-			nomcol = oss.str();
-			position = glp_find_col(lp, nomcol.c_str());
+			position = glp_find_col(lp, oss.str().c_str());
 			CompteurIA++;
 			ia[CompteurIA] = CompteurContrainte;
 			ja[CompteurIA] = position;
@@ -226,8 +212,7 @@ void Jobshop::solve(string filename, bool display)
 
 			oss.str("");
 			oss << "dur_" << i << '_' << j;
-			nomcol = oss.str();
-			position = glp_find_col(lp, nomcol.c_str());
+			position = glp_find_col(lp, oss.str().c_str());
 			CompteurIA++;
 			ia[CompteurIA] = CompteurContrainte;
 			ja[CompteurIA] = position;
@@ -237,20 +222,18 @@ void Jobshop::solve(string filename, bool display)
 
 	//contrainte : respecter P (temps ttt)
 	for (int i = 0; i < n; i++){
-		for (int j = 0; j < m - 1; j++){////////////	BLOC C5	 ////////////
+		for (int j = 0; j < m - 1; j++){
 			
 			CompteurContrainte++;
 			oss.str("");
 			oss << "c_" << CompteurContrainte;
-			nomcontrainte = oss.str();
 			glp_add_rows(lp, 1);
-			glp_set_row_name(lp, CompteurContrainte, nomcontrainte.c_str());
+			glp_set_row_name(lp, CompteurContrainte, oss.str().c_str());
 			glp_set_row_bnds(lp, CompteurContrainte, GLP_LO, P[i][j], 0);
 
 			oss.str("");
 			oss << "dur_" << i << '_' << j;
-			nomcol = oss.str();
-			position = glp_find_col(lp, nomcol.c_str());
+			position = glp_find_col(lp, oss.str().c_str());
 			CompteurIA++;
 			ia[CompteurIA] = CompteurContrainte;
 			ja[CompteurIA] = position;
@@ -260,7 +243,7 @@ void Jobshop::solve(string filename, bool display)
 
 	// ajout col objectif
 	CompteurCol++;
-	glp_add_cols(lp, 1); ////////////	BLOC C7	 ////////////
+	glp_add_cols(lp, 1);
 	glp_set_col_name(lp, CompteurCol, "z");
 	glp_set_col_bnds(lp, CompteurCol, GLP_LO, 0, 0);
 	glp_create_index(lp);//sinon crash
@@ -272,14 +255,12 @@ void Jobshop::solve(string filename, bool display)
 		oss.str("");
 		oss << "c_" << CompteurContrainte;
 		glp_add_rows(lp, 1);
-		nomcontrainte = oss.str();
-		glp_set_row_name(lp, CompteurContrainte, nomcontrainte.c_str());
-		glp_set_row_bnds(lp, CompteurContrainte, GLP_LO, P[i][m - 1], 0);
+		glp_set_row_name(lp, CompteurContrainte, oss.str().c_str());
+		glp_set_row_bnds(lp, CompteurContrainte, GLP_LO, P[i][m - 1], 0);//intellisense
 
 		oss.str("");
 		oss << "stime_" << i << '_' << m - 1;
-		nomcol = oss.str();
-		position = glp_find_col(lp, nomcol.c_str());
+		position = glp_find_col(lp, oss.str().c_str());
 		CompteurIA++;
 		ia[CompteurIA] = CompteurContrainte;
 		ja[CompteurIA] = position;
@@ -292,7 +273,7 @@ void Jobshop::solve(string filename, bool display)
 		ar[CompteurIA] = 1;
 	}
 
-	//charger matrice et lancer solveur
+	//charger et lancer solveur
 	position = glp_find_col(lp, "z");
 	glp_set_obj_coef(lp, position, 1);
 	glp_load_matrix(lp, CompteurIA, ia, ja, ar);
