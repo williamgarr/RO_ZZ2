@@ -1,7 +1,6 @@
 ﻿#include "Betail.h"
 
-void Betail::solve(int nb_iter)
-{
+void Betail::solve(int nb_iter){
     const int mp = 3;
     const int b = 3;
     const int n = 2;
@@ -65,7 +64,6 @@ void Betail::solve(int nb_iter)
     std::cout << "GLPK version : " << glp_version() << std::endl;
 
     while (iteration < nb_iter) {
-
         glp_prob* lp;
         int ia[1001], ja[1001];
         double ar[1001], z, x1, x2;
@@ -83,10 +81,8 @@ void Betail::solve(int nb_iter)
         int position;
 
         // definition des variables
-        for (int i = 1; i <= n; i++)
-        {
-            for (int j = 1; j <= mp; j++)
-            {
+        for (int i = 1; i <= n; i++){
+            for (int j = 1; j <= mp; j++){
                 ostringstream oss;
                 oss << "x_" << i << '_' << j;
                 nomcol = oss.str();
@@ -97,8 +93,7 @@ void Betail::solve(int nb_iter)
                 glp_set_col_bnds(lp, CompteurCol, GLP_LO, 0.0, 0.0);
             }
         }
-        for (int i = 1; i <= n; i++)
-        {
+        for (int i = 1; i <= n; i++){
             std::ostringstream oss;
             oss << "q_" << i;
             nomcol = oss.str();
@@ -112,8 +107,7 @@ void Betail::solve(int nb_iter)
         glp_create_index(lp);
 
         // contrainte 1
-        for (int i = 1; i <= n; i++)
-        {
+        for (int i = 1; i <= n; i++){
             glp_add_rows(lp, 1);
             CompteurContrainte++;
             std::ostringstream oss;
@@ -132,8 +126,7 @@ void Betail::solve(int nb_iter)
             ar[CompteurIA] = -1.0;
 
             // Ajout de 𝑞𝑖 dans la contrainte
-            for (int j = 1; j <= mp; j++)
-            {
+            for (int j = 1; j <= mp; j++){
                 // Ajout des xij
                 oss.str("");
                 oss << "x_" << i << '_' << j;
@@ -147,10 +140,8 @@ void Betail::solve(int nb_iter)
         }
 
         // contrainte 2
-        for (int i = 1; i <= n; i++)
-        {
-            for (int k = 1; k <= (b - 1); k++)
-            {
+        for (int i = 1; i <= n; i++){
+            for (int k = 1; k <= (b - 1); k++){
                 glp_add_rows(lp, 1);
                 CompteurContrainte++;
                 std::ostringstream oss;
@@ -160,8 +151,7 @@ void Betail::solve(int nb_iter)
                 glp_set_row_bnds(lp, CompteurContrainte, GLP_LO, 0.0, 0.0); // GLP_LO > | GLP_UP < | GLP_FX =
 
                 // Ajout de 𝑞𝑖 dans la contrainte
-                for (int j = 1; j <= mp; j++)
-                {
+                for (int j = 1; j <= mp; j++){
                     // Ajout des xij
                     oss.str("");
                     oss << "x_" << i << '_' << j;
@@ -185,8 +175,7 @@ void Betail::solve(int nb_iter)
         }
 
         // contrainte 3
-        for (int i = 1; i <= n; i++)
-        {
+        for (int i = 1; i <= n; i++){
             glp_add_rows(lp, 1);
             CompteurContrainte++;
             std::ostringstream oss;
@@ -196,8 +185,7 @@ void Betail::solve(int nb_iter)
             glp_set_row_bnds(lp, CompteurContrainte, GLP_UP, 0.0, 0.0); // GLP_LO > | GLP_UP < | GLP_FX =
 
             // Ajout de 𝑞𝑖 dans la contrainte
-            for (int j = 1; j <= mp; j++)
-            {
+            for (int j = 1; j <= mp; j++){
                 // Ajout des xij
                 oss.str("");
                 oss << "x_" << i << '_' << j;
@@ -246,8 +234,7 @@ void Betail::solve(int nb_iter)
         }*/
 
         // contrainte 5
-        for (int i = 1; i <= n; i++)
-        {
+        for (int i = 1; i <= n; i++){
             glp_add_rows(lp, 1);
             CompteurContrainte++;
             std::ostringstream oss;
@@ -301,12 +288,10 @@ void Betail::solve(int nb_iter)
         ar[CompteurIA] = 1;
         // fin col obj
 
-        for (int j = 1; j <= mp; j++)
-        {
+        for (int j = 1; j <= mp; j++){
             std::stringstream oss;
             double somme_x_j = 0;
-            for (int i = 1; i <= n; i++)
-            {
+            for (int i = 1; i <= n; i++){
                 oss.str("");
                 oss << "x_" << i << '_' << j;
                 nomcol = oss.str();
@@ -323,12 +308,10 @@ void Betail::solve(int nb_iter)
         }
 
         //std::stringstream oss;
-        for (int i = 1; i <= n; i++)
-        {
+        for (int i = 1; i <= n; i++){
             double resultat = 0.0;
 
-            for (int j = 1; j <= mp; j++)
-            {
+            for (int j = 1; j <= mp; j++){
                 oss.str("");
                 oss << "x_" << i << '_' << j;
                 nomcol = oss.str();
@@ -361,10 +344,8 @@ void Betail::solve(int nb_iter)
         z = glp_get_obj_val(lp);
         cout << "Z = " << z << endl;
 
-        for (int i = 1; i <= n; i++)
-        {
-            for (int j = 1; j <= mp; j++)
-            {
+        for (int i = 1; i <= n; i++){
+            for (int j = 1; j <= mp; j++){
                 oss.str("");
                 oss << "x_" << i << '_' << j;
                 nomcol = oss.str();
@@ -374,8 +355,7 @@ void Betail::solve(int nb_iter)
             }
         }
 
-        for (int i = 1; i <= n; i++)
-        {
+        for (int i = 1; i <= n; i++){
             oss.str("");
             oss << "q_" << i;
             nomcol = oss.str();
