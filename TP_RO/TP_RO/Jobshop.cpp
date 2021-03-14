@@ -1,22 +1,27 @@
 #include "Jobshop.h"
 
+
 void Jobshop::solve(string filename, bool display)
 {
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+	ostringstream oss;
 	const int MAX_SIZE = 300;
 	const int INF = 100000;
-	string name;
-	int n;
-	int m;
+	//string name;
+	int n = 0;
+	int m = 0;
 	int M[MAX_SIZE - 1][MAX_SIZE - 1];
 	int P[MAX_SIZE - 1][MAX_SIZE - 1];
 
 	// Lire les données de LaXX
 	ifstream file(filename.c_str());
 	if (!file.fail()){
-		name = filename;
+		//name = filename;
 		file >> n;
 		file >> m;
 
+		cout << "Filename = " << filename << endl;
+		cout << "n = " << n << ", m = " << m << endl;
 		for (int i = 0; i < n; i++){
 			for (int j = 0; j < m; j++){
 				file >> M[i][j]; //machine
@@ -28,8 +33,7 @@ void Jobshop::solve(string filename, bool display)
 
 	//Display
 	if (display){
-		cout << "Filename = " << name << endl;
-		cout << "n = " << n << ", m = " << m << endl;
+
 		cout << "+++ M +++" << endl;
 		for (int i = 0; i < n; i++){
 			for (int j = 0; j < m; j++)
@@ -47,9 +51,14 @@ void Jobshop::solve(string filename, bool display)
 	cout << endl<< "GLPK version : " << glp_version() << endl;
 
 	glp_prob* lp; 
-	int ia[3000], ja[3001];
-	double ar[3001], z, v;
-	ostringstream oss;
+	//int ia[3000], ja[3001];
+	//double ar[3001], z, v;
+	int* ia = new int[20000];
+	int* ja = new int[20000];
+	double* ar = new double[20001];
+	double  z, v;
+
+	
 
 	//création pb glpk
 	lp = glp_create_prob();
@@ -274,12 +283,19 @@ void Jobshop::solve(string filename, bool display)
 	}
 
 	//charger et lancer solveur
+	oss.str("");
+	oss << "js" << n << 'x' << m<<".lp";
+
 	position = glp_find_col(lp, "z");
 	glp_set_obj_coef(lp, position, 1);
 	glp_load_matrix(lp, CompteurIA, ia, ja, ar);
-	glp_write_lp(lp, NULL, "jobshop.lp");
+	glp_write_lp(lp, NULL, oss.str().c_str());
 
 	glp_simplex(lp, NULL);
 	z = glp_get_obj_val(lp);
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	cout << "Makespan: " << z << endl;
+	long temps = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
+	cout << "Temps : " << temps<< " ms" << std::endl;
+
 }
