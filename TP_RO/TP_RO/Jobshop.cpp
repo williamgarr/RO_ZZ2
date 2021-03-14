@@ -3,7 +3,7 @@
 
 void Jobshop::solve(string filename, bool display)
 {
-	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+	chrono::steady_clock::time_point begin = chrono::steady_clock::now();
 	ostringstream oss;
 	const int MAX_SIZE = 300;
 	const int INF = 100000;
@@ -48,15 +48,23 @@ void Jobshop::solve(string filename, bool display)
 		}
 	}
 
-	cout << endl<< "GLPK version : " << glp_version() << endl;
+	cout << "GLPK version : " << glp_version() << endl;
 
 	glp_prob* lp; 
-	//int ia[3000], ja[3001];
-	//double ar[3001], z, v;
-	int* ia = new int[20000];
-	int* ja = new int[20000];
-	double* ar = new double[20001];
+
 	double  z, v;
+
+	//reduire si crash !
+	int* ia = new int[15000];
+	int* ja = new int[15000];
+	double* ar = new double[15000];
+
+	//pour swv17, mauvaise idée qui marche:
+	//int* ia = new int[1000000];
+	//int* ja = new int[1000000];
+	//double* ar = new double[1000001];
+
+	
 
 	
 
@@ -293,9 +301,9 @@ void Jobshop::solve(string filename, bool display)
 
 	glp_simplex(lp, NULL);
 	z = glp_get_obj_val(lp);
-	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+	chrono::steady_clock::time_point end = chrono::steady_clock::now();
 	cout << "Makespan: " << z << endl;
-	long temps = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
-	cout << "Temps : " << temps<< " ms" << std::endl;
+	long temps = chrono::duration_cast<chrono::milliseconds>(end - begin).count();
+	cout << "Temps : " << temps<< " ms" << endl << endl;
 
 }

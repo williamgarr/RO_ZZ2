@@ -14,12 +14,14 @@ int main()
     //Jobshop::solve("La01.txt", true);
     //évolution du temps de calcul en fonction de la taille d'instance :
     Jobshop::solve("La01.txt", false);
-    //Jobshop::solve("La06.txt", false);
-    //Jobshop::solve("La16.txt", false);
-    //Jobshop::solve("La22.txt", false);
+    Jobshop::solve("La06.txt", false);
+    Jobshop::solve("La16.txt", false);
+    Jobshop::solve("La22.txt", false);
+    //Jobshop::solve("swv17.txt", false); /* Résolu! Makespan: 683 Temps : 407446 ms*/
 
     // Exercice 3 : Voyageur de commerce
     // Voyageur::solve();
+
     // Exercice 4 : Génération de colonnes
     // Colonne::solve();
 

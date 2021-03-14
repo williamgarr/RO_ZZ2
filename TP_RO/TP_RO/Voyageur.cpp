@@ -7,11 +7,9 @@ void Voyageur::solve()
 	int trajet[n][n];
 	int x[n][n];
 	// création des temps de trajet
-	for (int i = 0; i < n; i++)
-	{
+	for (int i = 0; i < n; i++){
 		int k = 1;
-		for (int j = 0; j < n; j++)
-		{
+		for (int j = 0; j < n; j++){
 			if (i == j)
 				trajet[i][j] = 0;
 			else
@@ -26,10 +24,8 @@ void Voyageur::solve()
 
 	// affichage
 	cout << "+++++ trajet +++++" << endl;
-	for (int i = 0; i < n; i++)
-	{
-		for (int j = 0; j < n; j++)
-		{
+	for (int i = 0; i < n; i++){
+		for (int j = 0; j < n; j++){
 			cout << trajet[i][j] << " ";
 		}
 		cout << endl;
@@ -58,10 +54,8 @@ void Voyageur::solve()
 	int position;
 
 	// Somme de ce qui part de i = 1
-	for (int i = 0; i < n; i++)
-	{
-		for (int j = 1; j < n; j++)
-		{
+	for (int i = 0; i < n; i++){
+		for (int j = 1; j < n; j++){
 			oss.str("");
 			oss << "i_" << i << '_' << j;
 			nomcol = oss.str();
@@ -73,10 +67,8 @@ void Voyageur::solve()
 	}
 
 	// Somme de ce qui arrive à j = 1
-	for (int j = 0; j < n; j++)
-	{
-		for (int i = 1; i < n; i++)
-		{
+	for (int j = 0; j < n; j++){
+		for (int i = 1; i < n; i++){
 			oss.str("");
 			oss << "j_" << i << '_' << j;
 			nomcol = oss.str();
@@ -88,8 +80,7 @@ void Voyageur::solve()
 	}
 
 	// x_ii = 0
-	for (int i = 0; i < n; i++)
-	{
+	for (int i = 0; i < n; i++){
 		oss.str("");
 		oss << "ii_" << i;
 		glp_add_cols(lp, 1);
@@ -97,8 +88,5 @@ void Voyageur::solve()
 		glp_set_col_name(lp, CompteurCol, nomcol.c_str());
 		glp_set_col_bnds(lp, CompteurCol, GLP_FX, 0.0, 0.0);
 	}
-
 	glp_create_index(lp);
-
-
 }
